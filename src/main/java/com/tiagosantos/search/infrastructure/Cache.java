@@ -34,7 +34,7 @@ public class Cache {
                 this.log.Warn(Messages.CACHE_ALREADY_CREATED.getValue());
                 return;
             }
-            this.log.Info(Messages.CACHE_CREATED_SUCCESS.getValue());
+            this.log.Info(Messages.CACHE_FILE_CREATED_SUCCESS.getValue());
         } catch (Exception error) {
             this.log.Error(error.getMessage());
         }

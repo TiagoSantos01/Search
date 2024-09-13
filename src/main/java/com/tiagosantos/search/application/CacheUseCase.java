@@ -56,7 +56,7 @@ public class CacheUseCase {
                     Regex yearString = new Regex("(\\d{4}(?!.*\\d{4}))", content);
 
                     if(texts.matchString().isEmpty())
-                        throw new IOException("Arquivo invalido para criaçao de cache titulo ano autor1 autor2 ....");
+                        throw new IOException(Messages.INVALID_CACHE_FILE.getValue());
 
                     int year = Integer.parseInt(yearString.matchStringGetFrist());
 
@@ -75,7 +75,7 @@ public class CacheUseCase {
                     }
                     }else
                     {
-                        this.log.Warn("Nenhum autor");
+                        this.log.Warn(Messages.NO_AUTHORS_FOUND.getValue());
                     }
                     this.movies.add(new Movie(texts.explodeString()[0], year, authorsList, file.getPath()));
 
@@ -89,11 +89,11 @@ public class CacheUseCase {
                     this.fileWarning.add(file.getPath());
                     this.log.Warn(errorNullPoint.getMessage());
                 } catch (Exception error) {
-                    throw new Exception(String.format("Error ao criar cache %s %s",error.getMessage(),file.getPath()));
+                    throw new Exception(String.format(Messages.ERROR_CREATING_CACHE.getValue(),error.getMessage(),file.getPath()));
                 }
 
                 progress++;
-                this.log.Info(String.format("Progresso: %s de %s Error: %s Alerta %s ",progress, total,error,warn));
+                this.log.Info(String.format(Messages.PROGRESS_STATUS.getValue(),progress, total,error,warn));
             }
             for (Movie movie : this.movies) {
                 this.data.add(movie.getName(), movie.getPathFile());
@@ -107,8 +107,8 @@ public class CacheUseCase {
             }
 
             cache.write(this.data.getValues(), true);
-            this.log.Info("Cache criado com sucesso.");
-            this.log.Info(String.format("Error: %s Alerta %s ",error,warn));
+            this.log.Info(Messages.CACHE_CREATED_SUCCESS.getValue());
+            this.log.Info(String.format(Messages.ERROR_AND_WARNING_STATUS.getValue(),error,warn));
             this.log.Warn(String.format("%s",this.fileWarning));
             this.log.Error(String.format("%s",this.fileError));
 

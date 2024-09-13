@@ -1,5 +1,6 @@
 package com.tiagosantos.search.application;
 
+import com.tiagosantos.search.domain.Messages;
 import com.tiagosantos.search.infrastructure.*;
 
 import java.util.*;
@@ -46,10 +47,9 @@ public class SeachUseCase {
         Set<String> removedDuplicateResul = new HashSet<>(resultSearch);
         List<String> resultSearchOrder= new ArrayList<>(removedDuplicateResul);
         Collections.sort(resultSearchOrder);
-        System.out.println(String.format("Foram encontradas %s ocorrências pelo termo \"%s\"", resultSearchOrder.size(), search));
-        System.out.println(String.format("Os arquivos que possuem \"%s\" são:", search));
+
+        System.out.println(String.format(Messages.OCCURRENCES_FOUND.getValue(), resultSearchOrder.size(), search));
+        System.out.println(String.format(Messages.FILES_CONTAINING_TERM.getValue(), search));
         System.out.println(String.join("\n", resultSearchOrder));
-
-
     }
 }
