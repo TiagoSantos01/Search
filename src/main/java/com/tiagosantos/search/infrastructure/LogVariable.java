@@ -18,7 +18,10 @@ public class LogVariable implements Log {
     {
         logs.add(String.format("Error: %s",message));
     }
-
+    public  void println(String message)
+    {
+        logs.add(message);
+    }
     public List<String> getLogs() {
         return logs;
     }

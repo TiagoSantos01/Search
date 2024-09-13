@@ -30,7 +30,7 @@ public class DataTest {
 
         assertTrue(result);
         assertEquals(0,this.log.getLogs().size());
-        assertTrue(data.getValues().containsKey("Key"));
+        assertTrue(data.getValues().containsKey("key"));
         assertTrue(data.getValues().containsValue(List.of("Value")));
     }
     @Test
@@ -50,7 +50,7 @@ public class DataTest {
         data.add("Key","Value");
 
         assertEquals(0,this.log.getLogs().size());
-        assertTrue(data.getValues().containsKey("Key"));
+        assertTrue(data.getValues().containsKey("key"));
         assertTrue(data.getValues().containsValue(List.of("Value")));
 
         data.deleteKey("Key");
@@ -62,7 +62,7 @@ public class DataTest {
         data.add("Key","Value");
 
         assertEquals(0,this.log.getLogs().size());
-        assertTrue(data.getValues().containsKey("Key"));
+        assertTrue(data.getValues().containsKey("key"));
         assertTrue(data.getValues().containsValue(List.of("Value")));
 
         boolean result= data.deleteValue("NotKey","Value");
@@ -76,24 +76,24 @@ public class DataTest {
         data.add("Key","Value");
 
         assertEquals(0,this.log.getLogs().size());
-        assertTrue(data.getValues().containsKey("Key"));
+        assertTrue(data.getValues().containsKey("key"));
         assertTrue(data.getValues().containsValue(List.of("Value")));
 
         boolean result= data.deleteValue("Key","Value");
         assertTrue(result);
-        assertTrue(data.getValues().containsKey("Key"));
-        assertEquals(0,data.getValues().get("Key").size());
+        assertTrue(data.getValues().containsKey("key"));
+        assertEquals(0,data.getValues().get("key").size());
 
     }
     @Test
     public void testSuccessSetValues(){
         HashMap<String,List<String>>values = new HashMap<>();
-        values.put("Key",List.of("Value"));
+        values.put("key",List.of("Value"));
         Data data= new Data(this.log);
         data.setValues(values);
 
         assertEquals(0,this.log.getLogs().size());
-        assertTrue(data.getValues().containsKey("Key"));
+        assertTrue(data.getValues().containsKey("key"));
         assertTrue(data.getValues().containsValue(List.of("Value")));
 
 
@@ -101,12 +101,12 @@ public class DataTest {
     @Test
     public void testSuccessGetValues(){
         HashMap<String,List<String>>values = new HashMap<>();
-        values.put("Key",List.of("Value"));
+        values.put("key",List.of("Value"));
         Data data= new Data(this.log);
         data.setValues(values);
 
         assertEquals(0,this.log.getLogs().size());
-        assertTrue(data.getValues().containsKey("Key"));
+        assertTrue(data.getValues().containsKey("key"));
         assertTrue(data.getValues().containsValue(List.of("Value")));
     }
     @Test
@@ -123,7 +123,7 @@ public class DataTest {
     @Test
     public void testSuccessFind(){
         HashMap<String,List<String>>values = new HashMap<>();
-        values.put("Key",List.of("Value"));
+        values.put("key",List.of("Value"));
         Data data= new Data(this.log);
         data.setValues(values);
 

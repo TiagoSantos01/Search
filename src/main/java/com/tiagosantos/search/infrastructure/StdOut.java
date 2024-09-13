@@ -16,4 +16,8 @@ public class StdOut implements Log {
         System.out.println(String.format("%s[ERROR]%s %s",Color.RED.getValue(),Color.RESET.getValue(),message));
 
     }
+    public  void println(String message)
+    {
+        System.out.println(message);
+    }
 }

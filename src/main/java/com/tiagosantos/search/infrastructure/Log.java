@@ -10,4 +10,7 @@ public interface Log {
     public default void Error(String message)
     {
     }
+    public default void println(String message)
+    {
+    }
 }

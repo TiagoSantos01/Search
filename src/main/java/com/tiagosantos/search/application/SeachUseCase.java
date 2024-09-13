@@ -20,16 +20,24 @@ public class SeachUseCase {
         this.cache = new Cache(this.log, "cache.data");
     }
 
+    public SeachUseCase(Log log, Data data, Time time, Cache cache) {
+        this.log =log;
+        this.data =data;
+        this.time =time;
+        this.cache =cache;
+    }
+
     public void execute(String search) {
 
+        String searchLowerCase=search.toLowerCase();
         HashMap<String, List<String>> values = this.cache.read();
         this.data.setValues(values);
         this.time.start();
-        List<String> resultSearch= this.data.find(search);
+        List<String> resultSearch= this.data.find(searchLowerCase);
 
         if (resultSearch.isEmpty()) {
             List<String> wordRegex = new ArrayList<>();
-            String[] words = search.split(" ");
+            String[] words = searchLowerCase.split(" ");
             for (String word : words) {
                 wordRegex.add(String.format("(?=.*\\b%s\\b)", word));
             }
@@ -47,8 +55,10 @@ public class SeachUseCase {
         List<String> resultSearchOrder= new ArrayList<>(removedDuplicateResul);
         Collections.sort(resultSearchOrder);
 
-        System.out.println(String.format(Messages.OCCURRENCES_FOUND.getValue(), resultSearchOrder.size(), search));
-        System.out.println(String.format(Messages.FILES_CONTAINING_TERM.getValue(), search));
-        System.out.println(String.join("\n", resultSearchOrder));
+        this.log.println(String.format(Messages.OCCURRENCES_FOUND.getValue(), resultSearchOrder.size(), search));
+        if(resultSearch.isEmpty())
+            return;
+        this.log.println(String.format(Messages.FILES_CONTAINING_TERM.getValue(), search));
+        this.log.println(String.join("\n", resultSearchOrder));
     }
 }

@@ -15,13 +15,14 @@ public class Data {
         this.values=new HashMap<>();
     }
     public boolean add(String key, String value){
-        if(key.isEmpty()){
+        String keyLowerCase=key.toLowerCase();
+        if(keyLowerCase.isEmpty()){
             this.log.Warn(Messages.EMPTY_KEY.getValue());
             return false;
         }
-        if(!this.values.containsKey(key))
-            this.values.put(key,new ArrayList<>());
-        return this.values.get(key).add(value);
+        if(!this.values.containsKey(keyLowerCase.toLowerCase()))
+            this.values.put(keyLowerCase.toLowerCase(),new ArrayList<>());
+        return this.values.get(keyLowerCase.toLowerCase()).add(value);
     }
     public boolean add(Integer key, String value) {
         return add(Integer.toString(key),value);
@@ -30,8 +31,9 @@ public class Data {
     this.values.remove(key);
     }
     public boolean deleteValue(String key, String value){
-        if(this.values.containsKey(key)){
-            return this.values.get(key).remove(value);
+        String keyLowerCase=key.toLowerCase();
+        if(this.values.containsKey(keyLowerCase)){
+            return this.values.get(keyLowerCase).remove(value);
         }
         this.log.Warn(Messages.KEY_NOT_FOUND.getValue());
         return false;
@@ -44,8 +46,9 @@ public class Data {
     }
 
     public List<String> find(String search){
-        if(this.values.containsKey(search))
-            return this.values.get(search);
+        String searchLowerCase=search.toLowerCase();
+        if(this.values.containsKey(searchLowerCase))
+            return this.values.get(searchLowerCase);
         return new ArrayList<>();
     }
 }
