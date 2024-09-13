@@ -5,10 +5,10 @@ import java.util.List;
 public class Movie {
     private String name;
     private int year;
-    private List<Artist> artists;
+    private List<Cast> artists;
     private String pathFile;
 
-    public Movie(String name,int year,List<Artist> artists, String pathFile)
+    public Movie(String name, int year, List<Cast> artists, String pathFile)
     {
         this.name=name;
         this.year=year;
@@ -31,11 +31,11 @@ public class Movie {
         this.year = year;
     }
 
-    public List<Artist> getArtists() {
+    public List<Cast> getArtists() {
         return artists;
     }
 
-    public void setArtists(List<Artist> artists) {
+    public void setArtists(List<Cast> artists) {
         this.artists = artists;
     }
 

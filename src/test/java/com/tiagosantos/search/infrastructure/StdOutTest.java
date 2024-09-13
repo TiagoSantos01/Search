@@ -22,7 +22,7 @@ public class StdOutTest {
         System.setOut(originalOut);
         String exitConsoleString = exitConsole.toString();
 
-        assertEquals("INFO: Teste",exitConsoleString);
+        assertEquals("INFO: Teste\n",exitConsoleString);
     }
     @Test
     public void testWarn(){
@@ -36,7 +36,7 @@ public class StdOutTest {
         System.setOut(originalOut);
         String exitConsoleString = exitConsole.toString();
 
-        assertEquals("WARN: Teste",exitConsoleString);
+        assertEquals("WARN: Teste\n",exitConsoleString);
     }
     @Test
     public void testError(){
@@ -50,6 +50,6 @@ public class StdOutTest {
         System.setOut(originalOut);
         String exitConsoleString = exitConsole.toString();
 
-        assertEquals("Error: Teste",exitConsoleString);
+        assertEquals("Error: Teste\n",exitConsoleString);
     }
 }

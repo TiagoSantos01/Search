@@ -1,7 +1,5 @@
 package com.tiagosantos.search.infrastructure;
 
-import com.tiagosantos.search.domain.Artist;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -32,6 +30,7 @@ public class Regex {
             return "";
         return matcher.group();
     }
+
     public List<String> matchString()
     {
         Pattern pattern= Pattern.compile(regex);

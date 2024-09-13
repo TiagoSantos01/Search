@@ -9,8 +9,7 @@ import java.util.Map;
 public class Cache {
 
     public String cache;
-    private FileReader fileReader;
-    private Log log;
+    private final Log log;
 
     public Cache(){
         this.log= new StdOut();
@@ -20,7 +19,10 @@ public class Cache {
         this.log= log;
         this.cache=cache;
     }
-    public void Create() {
+    public boolean isExist() {
+        return new File(this.cache).exists();
+    }
+    public void create() {
 
         try {
             if(this.cache==null || this.cache.isEmpty())
@@ -36,7 +38,7 @@ public class Cache {
         }
     }
 
-    public void Write(HashMap<String, List<String>> document, Boolean append) {
+    public void write(HashMap<String, List<String>> document, Boolean append) {
         try {
             if (!new File(this.cache).exists())
                 throw new Exception("Arquivo não existe.");
@@ -53,18 +55,18 @@ public class Cache {
         }
     }
 
-    public void Write(HashMap<String, List<String>> document) {
-        Write(document,false);
+    public void write(HashMap<String, List<String>> document) {
+        write(document,false);
     }
 
-    public HashMap<String, List<String>> Read() {
+    public HashMap<String, List<String>> read() {
         HashMap<String, List<String>> document = new HashMap<>();
         try {
-            this.fileReader = new FileReader(this.cache);
-            if (!this.fileReader.ready())
+            FileReader fileReader = new FileReader(this.cache);
+            if (!fileReader.ready())
                 throw new Exception("Cache Vazio");
 
-            try (BufferedReader br = new BufferedReader(this.fileReader)) {
+            try (BufferedReader br = new BufferedReader(fileReader)) {
                 String linha;
                 while ((linha = br.readLine()) != null) {
                     String[] line = linha.split(";");
@@ -85,5 +87,20 @@ public class Cache {
             this.log.Error( error.getMessage());
         }
         return new HashMap<>();
+    }
+
+    public void clear(){
+        try {
+        if (!new File(this.cache).exists())
+            throw new Exception("Arquivo não existe.");
+        try (FileWriter file = new FileWriter(this.cache, false)) {
+                file.write("");
+        } catch (IOException errorIO) {
+            this.log.Error("Error ao limpar cache");
+        }
+
+        } catch (Exception error) {
+            this.log.Error(error.getMessage());
+        }
     }
 }

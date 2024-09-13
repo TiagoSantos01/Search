@@ -1,11 +1,11 @@
 package com.tiagosantos.search.domain;
 
-public class Artist {
+public class Cast {
     private String fistName;
     private String lastName;
 
-    public Artist(){}
-    public Artist(String fistName, String lastName){
+    public Cast(){}
+    public Cast(String fistName, String lastName){
         this.fistName= fistName;
         this.lastName= lastName;
     }

@@ -1,143 +1,120 @@
 package com.tiagosantos.search.application;
 
-import com.tiagosantos.search.domain.Artist;
+import com.tiagosantos.search.domain.Cast;
 import com.tiagosantos.search.domain.Messages;
 import com.tiagosantos.search.domain.Movie;
-import com.tiagosantos.search.infrastructure.Convert;
-import com.tiagosantos.search.infrastructure.Document;
+import com.tiagosantos.search.infrastructure.*;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class CacheUseCase {
 
     private final Document document;
-    private Convert<Movie> convert;
-    private List<Movie> movies= new ArrayList<>();
-    private HashMap<String,List<String>> cache= new HashMap<>();
-    public  CacheUseCase(){
-         this.document= new Document("./data");
-         this.convert= new Convert<>();
+    private final Cache cache;
+    private final Data data;
+    private final Log log;
+    private final List<Movie> movies = new ArrayList<>();
+
+    private int progress=0;
+    private int error=0;
+    private int warn=0;
+    private final List<String> fileError= new ArrayList<>();
+    private final List<String> fileWarning= new ArrayList<>();
+
+    public CacheUseCase() {
+        this.log = new StdOut();
+        this.document = new Document("./data");
+        this.data = new Data(this.log);
+        this.cache = new Cache(this.log, "cache.data");
+        this.cache.create();
     }
 
-    public void execute(){
-    try {
-        java.io.File[] files = this.document.getListByFolder();
+    public void execute() {
+        try {
+            java.io.File[] files = this.document.getListByFolder();
 
-        if (files == null)
-            throw new NullPointerException(String.format("%s %s", Messages.FILE_IS_NULL.getValue(), Messages.FILE_TYPE_SUPPORTED.getValue()));
+            if (files == null)
+                throw new NullPointerException(String.format("%s %s", Messages.FILE_IS_NULL.getValue(), Messages.FILE_TYPE_SUPPORTED.getValue()));
 
-        for(java.io.File file : files)
-        {
-            try {
-                if (!file.isFile())
-                    throw  new IOException(String.format("Error: %s \n %s",Messages.NOT_FILE.getValue(),file.getPath()));
+            this.cache.clear();
+            int total = files.length;
+            for (File file : files) {
+                try {
+                    if (!file.isFile())
+                        throw new IOException(String.format("%s \n %s", Messages.NOT_FILE.getValue(), file.getPath()));
 
-                String content = new String (java.nio.file.Files.readAllBytes(Paths.get(file.getPath())));
+                    String content = new String(java.nio.file.Files.readAllBytes(Paths.get(file.getPath())));
+                    if (content.isEmpty())
+                        throw new NullPointerException(String.format("%s %s", Messages.FILE_IS_NULL.getValue(), file.getPath()));
 
-//(\d{4}(?!.*\d{4})) pega o ano
-                String[] texts= content.split("(\\s\\d{4}(?!.*\\d{4}\\s))");
+                    Regex texts = new Regex("(\\s\\d{4}(?!.*\\d{4}\\s))", content);
+                    Regex yearString = new Regex("(\\d{4}(?!.*\\d{4}))", content);
 
-                Pattern pattern = Pattern.compile("(\\d{4}(?!.*\\d{4}))");
+                    if(texts.matchString().isEmpty())
+                        throw new IOException("Arquivo invalido para criaçao de cache titulo ano autor1 autor2 ....");
 
-                Matcher matcher = pattern.matcher(content);
+                    int year = Integer.parseInt(yearString.matchStringGetFrist());
 
-                if(!matcher.find())
-                    throw new Exception("Não foi encontrado o ano no arquivo");
-                int year= Integer.parseInt(matcher.group());
-
-
-                Pattern patternArtist = Pattern.compile("\\b(?:\\w+\\s\\w+|\\w+\\s\\w+\\s\\w+|\\w+\\s\\w+\\s\\w+\\s\\w+|\\w+)\\b");
-                Matcher matcherArtist = patternArtist.matcher(texts[1]);
-
-//                if(!matcherArtist.find())
-//                    throw new Exception("Não foi encontrado o atores no arquivo");
-
-                List<Artist> authors= new ArrayList<>();
-                while (matcherArtist.find()) {
-                    String author = matcherArtist.group().trim();
-                    if (!author.isEmpty()) {
-                    String[] name= author.split(" ");
-                    if(name.length==1) {
-                        String[] newName = Arrays.copyOf(name, name.length + 1);
-                        newName[name.length]="";
-                        name=newName;
+                    List<Cast> authorsList = new ArrayList<>();
+                    if(texts.explodeString().length==2)
+                    {
+                    Regex authors = new Regex("\\b(?:\\w+\\s\\w+|\\w+\\s\\w+\\s\\w+|\\w+\\s\\w+\\s\\w+\\s\\w+|\\w+)\\b", texts.explodeString()[1]);
+                    for (String author : authors.matchString()) {
+                        String[] name = author.split(" ");
+                        if (name.length == 1) {
+                            String[] newName = Arrays.copyOf(name, name.length + 1);
+                            newName[name.length] = "";
+                            name = newName;
+                        }
+                        authorsList.add(new Cast(name[0], name[1]));
                     }
-
-                    authors.add(new Artist(name[0],name[1]));
+                    }else
+                    {
+                        this.log.Warn("Nenhum autor");
                     }
+                    this.movies.add(new Movie(texts.explodeString()[0], year, authorsList, file.getPath()));
+
+
+                } catch (IOException errorIO) {
+                    this.error++;
+                    this.fileError.add(file.getPath());
+                    this.log.Error(errorIO.getMessage());
+                } catch (NullPointerException errorNullPoint) {
+                    this.warn++;
+                    this.fileWarning.add(file.getPath());
+                    this.log.Warn(errorNullPoint.getMessage());
+                } catch (Exception error) {
+                    throw new Exception(String.format("Error ao criar cache %s %s",error.getMessage(),file.getPath()));
                 }
 
-                this.movies.add(new Movie(texts[0],year,authors,file.getPath()));
-
-
-
-                for(Movie movie : this.movies)
-                {
-                    if(this.cache.containsKey(movie.getName()))
-                        this.cache.get(movie.getName()).add(movie.getPathFile());
-                        else {
-                        List<String> movieList = new ArrayList<>();
-                        movieList.add(movie.getPathFile());
-                        this.cache.put(movie.getName(), movieList);
-                    }
-
-                    if(this.cache.containsKey(Integer.toString(movie.getYear())))
-                        this.cache.get(Integer.toString(movie.getYear())).add(movie.getPathFile());
-                    else {
-                        List<String> movieList = new ArrayList<>();
-                        movieList.add(movie.getPathFile());
-                        this.cache.put(Integer.toString(movie.getYear()), movieList);
-                    }
-
-                    for(Artist artist: movie.getArtists()) {
-                        if (this.cache.containsKey(artist.getFullName()))
-                            this.cache.get(artist.getFullName()).add(movie.getPathFile());
-                        else {
-                            List<String> movieList = new ArrayList<>();
-                            movieList.add(movie.getPathFile());
-                            this.cache.put(artist.getFullName(), movieList);
-                        }
-
-                        if (this.cache.containsKey(artist.getFistName()))
-                            this.cache.get(artist.getFistName()).add(movie.getPathFile());
-                        else {
-                            List<String> movieList = new ArrayList<>();
-                            movieList.add(movie.getPathFile());
-                            this.cache.put(artist.getFistName(), movieList);
-                        }
-
-                        if (this.cache.containsKey(artist.getLastName()))
-                            this.cache.get(artist.getLastName()).add(movie.getPathFile());
-                        else {
-                            List<String> movieList = new ArrayList<>();
-                            movieList.add(movie.getPathFile());
-                            this.cache.put(artist.getLastName(), movieList);
-                        }
-                    }
-                }
-
-
-
-            }catch (IOException errorIO)
-            {
-                System.out.print(String.format("Error: %s", errorIO.getMessage()));
-
+                progress++;
+                this.log.Info(String.format("Progresso: %s de %s Error: %s Alerta %s ",progress, total,error,warn));
             }
+            for (Movie movie : this.movies) {
+                this.data.add(movie.getName(), movie.getPathFile());
+                this.data.add(movie.getYear(), movie.getPathFile());
+
+                for (Cast artist : movie.getArtists()) {
+                    this.data.add(artist.getFistName(), movie.getPathFile());
+                    this.data.add(artist.getLastName(), movie.getPathFile());
+                    this.data.add(artist.getFullName(), movie.getPathFile());
+                }
+            }
+
+            cache.write(this.data.getValues(), true);
+            this.log.Info("Cache criado com sucesso.");
+            this.log.Info(String.format("Error: %s Alerta %s ",error,warn));
+            this.log.Warn(String.format("%s",this.fileWarning));
+            this.log.Error(String.format("%s",this.fileError));
+
+
+        } catch (Exception error) {
+            this.log.Error(error.getMessage());
         }
-//                this.document.Save(this.cache);
-
-                System.out.print(this.movies.toString());
-    }catch (Exception error)
-    {
-        System.out.print(String.format("Error: %s", error.getMessage()));
-    }
-
     }
 }

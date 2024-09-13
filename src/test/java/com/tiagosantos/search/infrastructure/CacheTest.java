@@ -29,7 +29,7 @@ public class CacheTest {
 @Test
     public void testFailCreateFilePathIsNull(){
         Cache cache =new Cache(this.log,null);
-        cache.Create();
+        cache.create();
     assertEquals(1,log.getLogs().size());
     assertEquals("Error: Nenhum caminho informado", log.getLogs().get(0));
 
@@ -37,18 +37,18 @@ public class CacheTest {
     @Test
     public void testFileExistNotCreate(){
         Cache cacheprepare =new Cache(this.log,this.file);
-        cacheprepare.Create();
+        cacheprepare.create();
 
         this.log= new LogVariable();
         Cache cache =new Cache(this.log,this.file);
-        cache.Create();
+        cache.create();
         assertEquals(1,log.getLogs().size());
         assertEquals("WARN: Arquivo de cache ja criado.", log.getLogs().get(0));
     }
     @Test
     public void testSuccessCreateFile(){
         Cache cache =new Cache(this.log,this.file);
-        cache.Create();
+        cache.create();
         assertEquals(1,log.getLogs().size());
         assertEquals("INFO: Arquivo de cache criado com sucesso.", log.getLogs().get(0));
     }
@@ -56,12 +56,12 @@ public class CacheTest {
     @Test
     public void testFailFileNotExist(){
         Cache cache =new Cache(this.log,this.file);
-        cache.Create();
+        cache.create();
 
         HashMap<String, List<String>> texts=new HashMap<>();
         texts.put("Test", List.of("Text1"));
         new File(this.file).delete();
-        cache.Write(texts);
+        cache.write(texts);
 
         assertEquals(2,log.getLogs().size());
         assertEquals("Error: Arquivo não existe.", log.getLogs().get(1));
@@ -70,11 +70,11 @@ public class CacheTest {
     @Test
     public void testSuccessWrite(){
         Cache cache =new Cache(this.log,this.file);
-        cache.Create();
+        cache.create();
 
         HashMap<String, List<String>> texts=new HashMap<>();
         texts.put("Test", List.of("Text1"));
-        cache.Write(texts);
+        cache.write(texts);
 
         assertEquals(1,log.getLogs().size());
     }
@@ -82,12 +82,12 @@ public class CacheTest {
     @Test
     public void testSuccessWriteAppendTextInFile(){
         Cache cache =new Cache(this.log,this.file);
-        cache.Create();
+        cache.create();
 
         HashMap<String, List<String>> texts=new HashMap<>();
         texts.put("Test", List.of("Text1"));
-        cache.Write(texts);
-        cache.Write(texts,true);
+        cache.write(texts);
+        cache.write(texts,true);
 
         assertEquals(1,log.getLogs().size());
     }
@@ -95,7 +95,7 @@ public class CacheTest {
     @Test
     public void testFailCacheNotExist(){
         Cache cache =new Cache(this.log,this.file);
-        cache.Read();
+        cache.read();
 
         assertEquals(1,log.getLogs().size());
         assertEquals("Error: Arquivo test.data não existe", log.getLogs().get(0));
@@ -103,10 +103,10 @@ public class CacheTest {
     @Test
     public void testFailFileEmpty(){
         Cache cache =new Cache(this.log,this.file);
-        cache.Create();
+        cache.create();
 
         HashMap<String, List<String>> texts=new HashMap<>();
-        cache.Read();
+        cache.read();
 
         assertEquals(2,log.getLogs().size());
         assertEquals("Error: Cache Vazio", log.getLogs().get(1));
@@ -114,12 +114,12 @@ public class CacheTest {
     @Test
     public void testFailValuesInvalids(){
         Cache cache =new Cache(this.log,this.file);
-        cache.Create();
+        cache.create();
 
         HashMap<String, List<String>> texts=new HashMap<>();
         texts.put("Test",new ArrayList<>());
-        cache.Write(texts);
-        cache.Read();
+        cache.write(texts);
+        cache.read();
 
         assertEquals(2,log.getLogs().size());
         assertEquals("Error: Cache com valores invalido", log.getLogs().get(1));
@@ -128,12 +128,12 @@ public class CacheTest {
     @Test
     public void testSuccessReader(){
         Cache cache =new Cache(this.log,this.file);
-        cache.Create();
+        cache.create();
 
         HashMap<String, List<String>> texts=new HashMap<>();
         texts.put("Test",List.of("abc123"));
-        cache.Write(texts);
-        HashMap<String,List<String>> values= cache.Read();
+        cache.write(texts);
+        HashMap<String,List<String>> values= cache.read();
 
         assertEquals(1,log.getLogs().size());
         assertEquals(1, values.size());
