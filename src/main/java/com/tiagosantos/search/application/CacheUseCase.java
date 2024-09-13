@@ -6,9 +6,7 @@ import com.tiagosantos.search.domain.Movie;
 import com.tiagosantos.search.infrastructure.Convert;
 import com.tiagosantos.search.infrastructure.Document;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,21 +28,22 @@ public class CacheUseCase {
 
     public void execute(){
     try {
-        File[] files = this.document.getListByFolder();
+        java.io.File[] files = this.document.getListByFolder();
 
         if (files == null)
             throw new NullPointerException(String.format("%s %s", Messages.FILE_IS_NULL.getValue(), Messages.FILE_TYPE_SUPPORTED.getValue()));
 
-        for(File file : files)
+        for(java.io.File file : files)
         {
             try {
                 if (!file.isFile())
                     throw  new IOException(String.format("Error: %s \n %s",Messages.NOT_FILE.getValue(),file.getPath()));
 
-                String content = new String (Files.readAllBytes(Paths.get(file.getPath())));
+                String content = new String (java.nio.file.Files.readAllBytes(Paths.get(file.getPath())));
 
 //(\d{4}(?!.*\d{4})) pega o ano
                 String[] texts= content.split("(\\s\\d{4}(?!.*\\d{4}\\s))");
+
                 Pattern pattern = Pattern.compile("(\\d{4}(?!.*\\d{4}))");
 
                 Matcher matcher = pattern.matcher(content);
@@ -132,7 +131,7 @@ public class CacheUseCase {
 
             }
         }
-                this.document.Save(this.cache);
+//                this.document.Save(this.cache);
 
                 System.out.print(this.movies.toString());
     }catch (Exception error)
