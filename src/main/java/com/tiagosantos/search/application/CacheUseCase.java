@@ -5,6 +5,7 @@ import com.tiagosantos.search.domain.Messages;
 import com.tiagosantos.search.domain.Movie;
 import com.tiagosantos.search.infrastructure.*;
 
+import javax.print.Doc;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -31,6 +32,13 @@ public class CacheUseCase {
         this.document = new Document("./data");
         this.data = new Data(this.log);
         this.cache = new Cache(this.log, "cache.data");
+        this.cache.create();
+    }
+    public CacheUseCase(Log log, Document document, Data data, Cache cache) {
+        this.log = log;
+        this.document = document;
+        this.data = data;
+        this.cache = cache;
         this.cache.create();
     }
 

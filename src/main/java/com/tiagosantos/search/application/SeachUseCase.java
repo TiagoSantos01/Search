@@ -20,7 +20,6 @@ public class SeachUseCase {
         this.cache = new Cache(this.log, "cache.data");
     }
 
-
     public void execute(String search) {
 
         HashMap<String, List<String>> values = this.cache.read();

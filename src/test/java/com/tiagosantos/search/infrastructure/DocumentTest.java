@@ -24,6 +24,6 @@ public class DocumentTest {
 
         java.io.File[] files= document.getListByFolder();
 
-        assertEquals(3,files.length);
+        assertEquals(6,files.length);
     }
 }
