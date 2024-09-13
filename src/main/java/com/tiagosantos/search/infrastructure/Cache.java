@@ -1,5 +1,7 @@
 package com.tiagosantos.search.infrastructure;
 
+import com.tiagosantos.search.domain.Messages;
+
 import java.io.*;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -26,13 +28,13 @@ public class Cache {
 
         try {
             if(this.cache==null || this.cache.isEmpty())
-                throw new NullPointerException("Nenhum caminho informado");
+                throw new NullPointerException(Messages.NO_PATH_PROVIDED.getValue());
             File file= new File(this.cache);
             if(!file.createNewFile()){
-                this.log.Warn("Arquivo de cache ja criado.");
+                this.log.Warn(Messages.CACHE_ALREADY_CREATED.getValue());
                 return;
             }
-            this.log.Info("Arquivo de cache criado com sucesso.");
+            this.log.Info(Messages.CACHE_CREATED_SUCCESS.getValue());
         } catch (Exception error) {
             this.log.Error(error.getMessage());
         }
@@ -41,13 +43,13 @@ public class Cache {
     public void write(HashMap<String, List<String>> document, Boolean append) {
         try {
             if (!new File(this.cache).exists())
-                throw new Exception("Arquivo não existe.");
+                throw new Exception(Messages.FILE_NOT_EXISTS.getValue());
             try (FileWriter file = new FileWriter(this.cache, append)) {
                 for (Map.Entry<String, List<String>> entry : document.entrySet()) {
                     file.write(entry.getKey() + ";" + String.join(",", entry.getValue()) + "\n");
                 }
             } catch (IOException errorIO) {
-                this.log.Error("Erro ao escrever no arquivo do cache");
+                this.log.Error(Messages.ERROR_WRITING_CACHE_FILE.getValue());
             }
         }catch (Exception error)
         {
@@ -64,14 +66,14 @@ public class Cache {
         try {
             FileReader fileReader = new FileReader(this.cache);
             if (!fileReader.ready())
-                throw new Exception("Cache Vazio");
+                throw new Exception(Messages.EMPTY_CACHE.getValue());
 
             try (BufferedReader br = new BufferedReader(fileReader)) {
                 String linha;
                 while ((linha = br.readLine()) != null) {
                     String[] line = linha.split(";");
                     if (line.length != 2)
-                        throw new Exception("Cache com valores invalido");
+                        throw new Exception(Messages.INVALID_CACHE_VALUES.getValue());
                     document.put(line[0], Arrays.stream(line[1].split(",")).toList());
                 }
             } catch (IOException errorIO) {
@@ -80,7 +82,7 @@ public class Cache {
             return document;
         }catch (IOException errorIO)
         {
-            this.log.Error(String.format("Arquivo %s não existe",this.cache));
+            this.log.Error(String.format(Messages.FILE_NOT_EXISTS_FORMAT.getValue(),this.cache));
 
 
         } catch (Exception error) {
@@ -92,11 +94,11 @@ public class Cache {
     public void clear(){
         try {
         if (!new File(this.cache).exists())
-            throw new Exception("Arquivo não existe.");
+            throw new Exception(Messages.FILE_NOT_EXISTS.getValue());
         try (FileWriter file = new FileWriter(this.cache, false)) {
                 file.write("");
         } catch (IOException errorIO) {
-            this.log.Error("Error ao limpar cache");
+            this.log.Error(Messages.ERROR_CLEANING_CACHE.getValue());
         }
 
         } catch (Exception error) {

@@ -31,7 +31,7 @@ public class CacheTest {
         Cache cache =new Cache(this.log,null);
         cache.create();
     assertEquals(1,log.getLogs().size());
-    assertEquals("Error: Nenhum caminho informado", log.getLogs().get(0));
+    assertEquals("Error: Nenhum caminho informado.", log.getLogs().get(0));
 
 }
     @Test
@@ -43,7 +43,7 @@ public class CacheTest {
         Cache cache =new Cache(this.log,this.file);
         cache.create();
         assertEquals(1,log.getLogs().size());
-        assertEquals("WARN: Arquivo de cache ja criado.", log.getLogs().get(0));
+        assertEquals("WARN: Arquivo de cache já criado.", log.getLogs().get(0));
     }
     @Test
     public void testSuccessCreateFile(){
@@ -98,7 +98,7 @@ public class CacheTest {
         cache.read();
 
         assertEquals(1,log.getLogs().size());
-        assertEquals("Error: Arquivo test.data não existe", log.getLogs().get(0));
+        assertEquals("Error: Arquivo test.data não existe.", log.getLogs().get(0));
     }
     @Test
     public void testFailFileEmpty(){
@@ -109,7 +109,7 @@ public class CacheTest {
         cache.read();
 
         assertEquals(2,log.getLogs().size());
-        assertEquals("Error: Cache Vazio", log.getLogs().get(1));
+        assertEquals("Error: Cache vazio", log.getLogs().get(1));
     }
     @Test
     public void testFailValuesInvalids(){
@@ -122,7 +122,7 @@ public class CacheTest {
         cache.read();
 
         assertEquals(2,log.getLogs().size());
-        assertEquals("Error: Cache com valores invalido", log.getLogs().get(1));
+        assertEquals("Error: Cache com valores inválidos", log.getLogs().get(1));
 
     }
     @Test

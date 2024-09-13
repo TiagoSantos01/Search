@@ -99,7 +99,7 @@ public class CacheUseCase {
                 this.data.add(movie.getName(), movie.getPathFile());
                 this.data.add(movie.getYear(), movie.getPathFile());
 
-                for (Cast artist : movie.getArtists()) {
+                for (Cast artist : movie.getCasts()) {
                     this.data.add(artist.getFistName(), movie.getPathFile());
                     this.data.add(artist.getLastName(), movie.getPathFile());
                     this.data.add(artist.getFullName(), movie.getPathFile());

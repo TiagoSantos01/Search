@@ -5,14 +5,14 @@ import java.util.List;
 public class Movie {
     private String name;
     private int year;
-    private List<Cast> artists;
+    private List<Cast> casts;
     private String pathFile;
 
-    public Movie(String name, int year, List<Cast> artists, String pathFile)
+    public Movie(String name, int year, List<Cast> casts, String pathFile)
     {
         this.name=name;
         this.year=year;
-        this.artists=artists;
+        this.casts =casts;
         this.pathFile=pathFile;
     }
     public String getName() {
@@ -31,12 +31,12 @@ public class Movie {
         this.year = year;
     }
 
-    public List<Cast> getArtists() {
-        return artists;
+    public List<Cast> getCasts() {
+        return casts;
     }
 
-    public void setArtists(List<Cast> artists) {
-        this.artists = artists;
+    public void setCasts(List<Cast> casts) {
+        this.casts = casts;
     }
 
     public String getPathFile() {
@@ -52,7 +52,7 @@ public class Movie {
         return "Movie{" +
                 "name='" + name + '\'' +
                 ", year=" + year +
-                ", artists=" + artists.toString() +
+                ", casts=" + casts.toString() +
                 ", pathFile='" + pathFile + '\'' +
                 '}';
     }

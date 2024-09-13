@@ -31,7 +31,7 @@ public class Cast {
     }
     @Override
     public String toString() {
-        return "Artist{" +
+        return "Cast{" +
                 "fistName='" + fistName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 '}';

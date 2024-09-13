@@ -1,12 +1,14 @@
 package com.tiagosantos.search.infrastructure;
 
+import com.tiagosantos.search.domain.Messages;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 public class Data {
 
-    private final HashMap<String, List<String>> values;
+    private HashMap<String, List<String>> values;
     private final Log log;
     public Data(Log log ){
         this.log=log;
@@ -14,7 +16,7 @@ public class Data {
     }
     public boolean add(String key, String value){
         if(key.isEmpty()){
-            this.log.Warn("Chave Vazia");
+            this.log.Warn(Messages.EMPTY_KEY.getValue());
             return false;
         }
         if(!this.values.containsKey(key))
@@ -31,11 +33,19 @@ public class Data {
         if(this.values.containsKey(key)){
             return this.values.get(key).remove(value);
         }
-        this.log.Warn("Chave não encontrada");
+        this.log.Warn(Messages.KEY_NOT_FOUND.getValue());
         return false;
     }
-
+    public void setValues(HashMap<String, List<String>> values) {
+        this.values=values;
+    }
     public HashMap<String, List<String>> getValues() {
         return this.values;
+    }
+
+    public List<String> find(String search){
+        if(this.values.containsKey(search))
+            return this.values.get(search);
+        return new ArrayList<>();
     }
 }
